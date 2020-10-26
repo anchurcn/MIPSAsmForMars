@@ -1,0 +1,25 @@
+Q：我能使用C编译器生成的汇编吗？
+A：可以，但是需要一些修改
+1.全局数组要么每个成员初始化，要么修改生成的汇编代码，给出数组长度.word 0:size
+2.生成的代码有类似 lui $2,%hi($LC0) 这种的代码不能通过Simulator的编译，原因是这是GNU汇编器语法，SPIM和MARS这些教学Simulator不支持这种语法。解决方法：
+1.可以手动进行转化，但下面示例不完整，且手动转化很不方便
+In the book "See MIPS Run 2nd Edition" by Morgan Kaufmann there are equivalents MIPS code for the instructions that use "hi" and "lo" registers for e.g.
+lw $2, addr => lui at, %hi(addr)
+                       lw $2, %lo(addr)(at)
+sw $2, addr($3) => lui at, %hi(addr)
+                               addu at, at, $3
+                               sw $2, %lo(addr)(at)
+la $2, addr => lui at, %hi(addr)
+                       addiu $2, at, %lo(addr)
+la $2, addr($3) => lui at, %hi(addr)
+                             addiu $2, at, %lo(addr)
+                             addu $2, $2, $3
+2.You can use the GCC flag -mno-explicit-relocs to avoid assembler relocation operators when dealing with symbolic addresses (i.e. %hi and %lo).
+
+You can check GCC MIPS options in https://gcc.gnu.org/onlinedocs/gcc-3.4.4/gcc/MIPS-Options.html
+
+full MIPS simulator：
+If you are developing a real MIPS cross compilation tool, you should test it with a full MIPS simulator like the free OVP MIPS Simulator. OVP is tested to be compatible with real MIPS processors.
+
+Q：取消延迟分支
+A：-fno-delayed-branch

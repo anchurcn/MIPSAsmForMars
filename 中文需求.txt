@@ -1,0 +1,11 @@
+自动判分脚本使用program参数发送input到program 
+PartA:
+必须使用program argument 接收输入
+创建框图和伪代码帮助开发
+框图和伪代码详尽的描述过程：读取argument、转ascii hex to integer、排序、打印
+生成代码打印参数到控制台
+
+PartB：
+输出原始ascii参数
+输出未排序int
+输出排序后int
